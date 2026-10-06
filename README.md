@@ -20,7 +20,8 @@ ECS focused on being lightweight and having fast query speed.
 
 ## Benchmark
 
-Twig's compact archetype representation allows unmatched entities to be rejected cheaply, making highly selective queries particularly fast.
+Twig's compact archetype representation allows unmatched entities to be rejected cheaply, making highly selective queries particularly fast. 
+you can find the benchmark [here](https://github.com/Meowtsun/Twig/blob/main/test/query.bench.luau)
 
 ![Twig benchmark](test/data/query_16_components.png)
 
@@ -68,19 +69,18 @@ local connection = name:publishedIn(world):Connect(function(entity, value)
     connection:Disconnect()
 end)
 
--- 2 more but these doesn't require you to flush, It just fires
+-- These two do not require a push(); they fire immediately
 -- name:createdIn(world) 
 -- name:removedIn(world) 
 
--- you can also have effects, they are also component
--- but you can not add it to any entity
--- you only stage() this component
-
+-- Effects use the same system as components,
+-- but cannot be added to an entity.
+-- They are only staged.
 local recompute_state = Twig.effect()
 local same_signal_api = recompute_state:publishedIn(world)
 
--- and membership doesn't matter, entity does not need to have this component
--- this act like built-in push signal, using the same API
+-- Membership does not matter, entity does not need to have this component.
+-- This acts like a built-in push signal using the same API.
 world:stage(entity, {
     recompute_state,
 })
