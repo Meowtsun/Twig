@@ -18,6 +18,13 @@ ECS focused on being lightweight and having fast query speed.
 
 ---
 
+## Benchmark
+
+Twig's compact archetype representation allows unmatched entities to be rejected cheaply, making highly selective queries particularly fast.
+
+![Twig benchmark](test\data\query_16_components.png)
+---
+
 ## Overview
 
 ```lua
