@@ -1,0 +1,12 @@
+# roblox exports
+*.rbxm
+*.rbxl
+*.rbxlx
+
+# personal tools
+InitCLI.lua
+WallyCLI.lua
+
+# documentation
+/docs/
+mkdocs.yml
