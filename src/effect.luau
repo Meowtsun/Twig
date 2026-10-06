@@ -54,8 +54,6 @@ end
 
 
 Effect.publishedIn = composeSignal('published')
-Effect.createdIn = composeSignal('created')
-Effect.removedIn = composeSignal('removed')
 
 
 export type build = { read component: effect, read value: any }
@@ -64,8 +62,6 @@ export type store = typeof(Effect.buildStore(nil :: any))
 
 export type API = {
 	read publishedIn: <world> (this: API, world: world) -> (Signal.signal<(entity: entity) -> ()>),
-	read createdIn: <world> (this: API, world: world) -> (Signal.signal<(entity: entity) -> ()>),
-	read removedIn: <world> (this: API, world: world) -> (Signal.signal<(entity: entity) -> ()>),
 	read token: any,
 }
 
@@ -79,10 +75,7 @@ function Effect.new()
 
 	this.token = newproxy()
 	this.buildStore = Effect.buildStore
-
 	this.publishedIn = Effect.publishedIn
-	this.createdIn = Effect.createdIn
-	this.removedIn = Effect.removedIn
 
 	return this
 end

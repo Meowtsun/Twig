@@ -1,7 +1,7 @@
 [package]
 name = "meowtsun/twig"
 description = "A lightweight ECS for Roblox focused on fast queries"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["meowtsun"]
 
 registry = "https://github.com/UpliftGames/wally-index"

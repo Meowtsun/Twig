@@ -2,6 +2,7 @@
 
 The Wicked ecs Inspired by Git<br/>
 ECS focused on being lightweight and having fast query speed.
+
 - Fast uncached component queries
 - Type-safe Luau API
 - Low memory overhead
@@ -82,6 +83,5 @@ world:push()
 Install Twig through Wally:
 
 ```toml
-[dependencies]
-twig = "meowtsun/twig@0.1.0"
+twig = "meowtsun/twig@0.1.1"
 ```
