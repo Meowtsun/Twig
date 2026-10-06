@@ -1,7 +1,7 @@
 --!optimize 2
 --!strict
 
-const Signal = require './internals/signal'
+const Signal = require(script.Parent.internals.signal)
 const Component = { }
 const Metatable = { }
 local NextID = 1

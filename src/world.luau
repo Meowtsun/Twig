@@ -188,6 +188,11 @@ function World.spawn(this: world, builds: { Component.build }): entity
 			stored.rowOf[entity] = row
 			stored.entityOf[row] = entity
 			table.insert(components, stored)
+
+			local signal = (stored :: any).created
+			if signal ~= nil then
+				signal:Fire(entity, value)
+			end
 		end
 	end
 
@@ -200,14 +205,13 @@ end
 
 function World.despawn(this: world, entity: entity)
 	local components = this.componentsOf[entity]
-	local removed = false
 
 	for _, stored in components do
 		const row = stored.rowOf[entity]
 		if row ~= nil then
-			removed = true
-
+			const value = stored.components[row]
 			const last = #stored.components
+
 			if row ~= last then
 				const movingID = stored.entityOf[row]
 				stored.components[row] = stored.components[last]
@@ -218,12 +222,18 @@ function World.despawn(this: world, entity: entity)
 			stored.components[last] = nil
 			stored.rowOf[entity] = nil
 			stored.entityOf[last] = nil
+
+			local signal = (stored :: any).removed
+			if signal ~= nil then
+				local copy = buffer.create(ENTITY_MAX_BYTES + GENERATION_MAX_BYTES)
+				buffer.copy(copy, 0, entity)
+				signal:Fire(copy, value)
+			end
+
 		end
 	end
 
-	if removed == true then
-		releaseEntity(this, entity)
-	end
+	releaseEntity(this, entity)
 end
 
 
@@ -413,15 +423,19 @@ end
 
 
 function World.withComponents(this: world, entity: entity, ...: Component.component): boolean
+	const queries = { ... }
+
 	const archetype = this.archetypesOf[entity]
-	const query = newArchetype({...:: any})
+	const query = newArchetype(queries :: any)
 	return isArchetypeCompatible(this, archetype, query)
 end
 
 
 function World.withoutComponents(this: world, entity: entity, ...: Component.component): boolean
+	const queries = { ... }
+
 	const archetype = this.archetypesOf[entity]
-	const query = newArchetype({...:: any})
+	const query = newArchetype(queries :: any)
 	return not isArchetypeCompatible(this, archetype, query)
 end
 
@@ -454,9 +468,11 @@ function World.push(this: world)
 		for entity in stored.commits do
 			local value = nil
 
-			const row = stored.rowOf[entity]
-			if row ~= nil then
-				value = stored.components[row]
+			if stored.rowOf ~= nil then
+				const row = stored.rowOf[entity]
+				if row ~= nil then
+					value = stored.components[row]
+				end
 			end
 
 			local signal = (stored :: any).published
