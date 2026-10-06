@@ -22,7 +22,6 @@ const twigWorld = Twig.world()
 const components = {
 	jecs = { },
 	twig = { },
-	ecr = { },
 }
 
 for cind = 1, COMPONENT_COUNT do
