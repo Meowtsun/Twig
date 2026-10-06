@@ -1,6 +1,6 @@
 ### Twig
 
-The Wicked ecs Inspired by Git
+The Wicked ecs Inspired by Git<br/>
 ECS focused on being lightweight and having fast query speed.
 - Fast uncached component queries
 - Type-safe Luau API
