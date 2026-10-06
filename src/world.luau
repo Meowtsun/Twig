@@ -15,6 +15,8 @@ const COMPONENT_CAPACITY = math.pow(2, 8 * COMPONENT_MAX_BYTES) - 1
 
 const Component = require(script.Parent.component)
 const World = { }
+
+const AnyComponent = buffer.create(COMPONENT_MAX_BYTES)
 local CachedArchetypes = { } :: { buffer }
 
 export type world = typeof(World.new())
@@ -436,7 +438,7 @@ function World.withoutComponents(this: world, entity: entity, ...: Component.com
 
 	const archetype = this.archetypesOf[entity]
 	const query = newArchetype(queries :: any)
-	return not isArchetypeCompatible(this, archetype, query)
+	return isArchetypeCompatible(this, archetype, AnyComponent, query)
 end
 
 

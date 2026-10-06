@@ -172,6 +172,17 @@ return function()
 			expect(world:withComponents(entityA, componentA, componentB)).to.equal(true)
 			expect(world:withComponents(entityA, componentA, componentB, componentC)).to.equal(false)
 		end)
+
+		it('should be able to test component\'s absence', function()
+			local entityA = world:spawn({ componentA.set(true), componentB.set(true) })
+			local componentC = Twig.component()
+
+			expect(world:withoutComponent(entityA, componentA)).to.equal(false)
+			expect(world:withoutComponent(entityA, componentC)).to.equal(true)
+
+			expect(world:withoutComponents(entityA, componentA, componentB)).to.equal(false)
+			expect(world:withoutComponents(entityA, componentA, componentB, componentC)).to.equal(false)
+		end)
 	end)
 
 	describe('stages', function()
