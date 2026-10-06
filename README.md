@@ -2,7 +2,7 @@
 
 The Wicked ecs Inspired by Git
 ECS focused on being lightweight and having fast query speed.
-- Fast component queries
+- Fast uncached component queries
 - Type-safe Luau API
 - Low memory overhead
 - Batching changes
