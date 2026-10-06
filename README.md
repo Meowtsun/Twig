@@ -1,33 +1,21 @@
-# Twig
+### Twig
 
 The Wicked ecs Inspired by Git
-
 ECS focused on being lightweight and having fast query speed.
-
----
-
-## Features
-
-- Lightweight ECS architecture
-- Archetype-based queries
 - Fast component queries
-- Strong Luau typing
-- Explicit state mutation and publication
-- Batched change signals
+- Type-safe Luau API
 - Low memory overhead
+- Batching changes
+- Explicit state publication
 
----
-
-## Benchmark
+### Benchmark
 
 Twig's compact archetype representation allows unmatched entities to be rejected cheaply, making highly selective queries particularly fast. 
 you can find the benchmark [here](https://github.com/Meowtsun/Twig/blob/main/test/query.bench.luau)
 
 ![Twig benchmark](test/data/query_16_components.png)
 
----
-
-## Overview
+### Overview
 
 ```lua
 local Twig = require(path_to_twig)
@@ -89,9 +77,7 @@ world:stage(entity, {
 world:push()
 ```
 
----
-
-## Installation
+### Installation
 
 Install Twig through Wally:
 
