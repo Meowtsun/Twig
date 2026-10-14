@@ -1,57 +1,57 @@
---!optimize 2
 --!strict
 
 const Signal = require(script.Parent.internals.signal)
 const Component = { }
-const Metatable = { }
-local NextID = 1
+local nextID = 1
 
 
-const function buildBlacklistOf(this: component): blacklist
-	local copy = { }
+const function buildStoreOf(component: class)
+	local this = { }
 
-	copy.token = this.token
-	copy.blacklist = true
+	this.token = component.token
+	this.commits = { }
+	this.components = { }
+	this.rowOf = { }
+	this.entityOf = { }
 
-	return copy
+	return this
 end
 
 
-const function getStoreOf(this: component, world)
-	return world.components[this.token]
-end
+const function buildSignal(label: string)
+	return function <world> (this: class, world: world)
+		world = world :: any
 
-
-const function composeSignal(name: string)
-	return function <world> (this: component, world: world)
-		local world = world :: any
-
-		local store = getStoreOf(this, world)
+		local store = world.components[this.token]
 		if store == nil then
-			store = Component.buildStore(this)
+			store = buildStoreOf(this)
 			world.components[this.token] = store
 		end
 
-		local signal = store[name]
-		if signal then -- reusing
+		local signal = store[label]
+		if signal ~= nil then
 			return signal
 		end
 
 		signal = Signal.new()
-		store[name] = signal
+		store[label] = signal
 
 		return signal
 	end
 end
 
 
-function Metatable.__call(this: component, value)
-	return this:set(value)
+const function buildBlacklistOf(this: class)
+	return {
+		token = this.token,
+		blacklist = true,
+	}
 end
 
 
-function Component.set(this: component)
-	return function (value: any?): build
+function Component.set(this: class)
+	return function <kind>
+	(value: kind): build<kind>
 		return {
 			component = this,
 			value = value,
@@ -60,61 +60,49 @@ function Component.set(this: component)
 end
 
 
-function Component.buildStore(this: component)
-	local store = { }
-
-	store.entityOf = { } :: { [row]: entity }
-	store.rowOf = { } :: { [entity]: row }
-	store.components = { } :: { [row]: any }
-	store.token = this.token
-	store.commits = { } :: { [entity]: true }
-
-	return store
-end
+Component.publishedIn = buildSignal('published')
+Component.createdIn = buildSignal('created')
+Component.removedIn = buildSignal('removed')
 
 
-Component.publishedIn = composeSignal('published')
-Component.createdIn = composeSignal('created')
-Component.removedIn = composeSignal('removed')
+export type class = typeof(Component.new())
+export type build<kind> = {
+	read component: class,
+	read value: kind,
+}
 
+type entity = buffer
+type row = number
 
-export type build = { read component: component, read value: any }
-export type component = typeof(Component.new())
-export type store = typeof(Component.buildStore(nil :: any))
-export type withToken = { [any]: any, read token: number }
+type componentSignalOf<kind> = Signal.signal<(entity: entity, value: kind) -> ()>
+type blacklist<kind> = { type: nil }
+
 export type API<kind> = {
-	read set: (value: kind) -> (build),
-	read none: component,
+	read none: blacklist<nil>,
 	read type: kind,
 	read token: number,
 
-	read publishedIn: <world> (this: API<kind>, world: world) -> (Signal.signal<(entity: entity, value: kind) -> ()>),
-	read createdIn: <world> (this: API<kind>, world: world) -> (Signal.signal<(entity: entity, value: kind) -> ()>),
-	read removedIn: <world> (this: API<kind>, world: world) -> (Signal.signal<(entity: entity, value: kind) -> ()>),
+	read publishedIn: <world> (this: API<kind>, world: world) -> (componentSignalOf<kind>),
+	read createdIn: <world> (this: API<kind>, world: world) -> (componentSignalOf<kind>),
+	read removedIn: <world> (this: API<kind>, world: world) -> (componentSignalOf<kind>),
+	read set: (value: kind) -> (build<kind>),
 }
-
-type blacklist = { read blacklist: boolean, read token: number }
-type row = number
-type entity = buffer
 
 
 function Component.new()
 	local this = { }
 
 	this.blacklist = false
-	this.token = NextID
-
-	this.buildStore = Component.buildStore
-	this.set = Component.set(this :: any)
-	this.none = buildBlacklistOf(this :: any)
+	this.token = nextID
+	nextID += 1
 
 	this.publishedIn = Component.publishedIn
 	this.createdIn = Component.createdIn
 	this.removedIn = Component.removedIn
+	this.set = Component.set(this)
+	this.none = buildBlacklistOf(this)
 
-	NextID += 1
-
-	return setmetatable(this, Metatable)
+	return this
 end
 
 

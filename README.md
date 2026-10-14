@@ -84,5 +84,5 @@ world:push()
 Install Twig through Wally:
 
 ```toml
-twig = "meowtsun/twig@0.1.3"
+twig = "meowtsun/twig@0.1.4"
 ```

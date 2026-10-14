@@ -233,10 +233,8 @@ return function()
 	end)
 
 	describe('added and removed', function()
-
 		it('should be able to detect component creation', function()
 			local entityA = world:spawn()
-
 			local received = {}
 
 			componentA:createdIn(world):Connect(function(entity, value)
@@ -331,6 +329,49 @@ return function()
 				end
 			end).to.never.throw()
 
+		end)
+	end)
+
+	describe('query', function()
+
+		it('should update query results when components are added', function()
+			local world = Twig.world()
+			local entity = world:spawn({ componentA.set(true) })
+
+			local count = 0
+			for _ in world:query(componentA, componentB) do
+				count += 1
+			end
+
+			expect(count).to.equal(0)
+
+			world:set(entity, {
+				componentB.set(true),
+			})
+
+			count = 0
+			for _ in world:query(componentA, componentB) do
+				count += 1
+			end
+
+			expect(count).to.equal(1)
+		end)
+
+		it('should query entities without the blacklisted component', function()
+			local world = Twig.world()
+
+			world:spawn()
+			world:spawn({ componentA.set(true) })
+			world:spawn({ componentB.set(true) })
+			world:spawn({ componentB.set(true) })
+			world:spawn({ componentA.set(true), componentB.set(true) })
+
+			local count = 0
+			for _ in world:query(componentB, componentA.none) do
+				count += 1
+			end
+
+			expect(count).to.equal(2)
 		end)
 	end)
 
